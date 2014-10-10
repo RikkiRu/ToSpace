@@ -1,0 +1,11 @@
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\bin\Debug\ToSpace!.exe.config
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\bin\Debug\ToSpace!.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\bin\Debug\ToSpace!.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\ToSpace_.FormMain.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\ToSpace_.Properties.Resources.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\Server.csproj.GenerateResource.Cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\ToSpace!.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\obj\Debug\ToSpace!.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\bin\Debug\Contract.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\ToSpace!\bin\Debug\Contract.pdb
