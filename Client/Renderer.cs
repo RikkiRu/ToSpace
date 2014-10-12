@@ -21,11 +21,18 @@ namespace Client
         public textureObject border = null;
         public Player me;
         public playerPos position = new playerPos();
+        public ClientConnectionSys connect;
+        int prev_i;
+        int prev_j;
 
-        public float quadSize = 10f;
+        public float quadSize = MapPlanet.quadSize;
 
-        public Renderer(GLControl x, Player me)
+        public Renderer(GLControl x, Player me, ClientConnectionSys connect)
         {
+            this.connect = connect;
+
+            
+
             this.me = me;
             display = new mainRenClass(x, 100);
             textureObject.wayToTexturesFolder = Environment.CurrentDirectory + @"/Textures";
@@ -63,8 +70,8 @@ namespace Client
                 if (display.ortoX < display.ortoY) orth = display.ortoY+5;
 
                 backgroundStatic = new textureObject(@"planet/PlanetBack", 1000, orth, orth);
-                backgroundStatic.x = (int)display.ortoX / 2;
-                backgroundStatic.y = (int)display.ortoY / 2;
+                backgroundStatic.x = display.ortoX / 2;
+                backgroundStatic.y = display.ortoY / 2;
 
 
                 
@@ -72,8 +79,8 @@ namespace Client
                 if(x.defaultQuad.type == typeOfquad.grass)
                 {
                     backgroundQuad = new textureObject(@"planet/planetGrass", 0, x.sizeX * quadSize, x.sizeY * quadSize, x.sizeX, x.sizeY);
-                    backgroundQuad.x = (x.sizeX-1) * quadSize / 2;
-                    backgroundQuad.y = (x.sizeY-1) * quadSize / 2;
+                    backgroundQuad.x = (x.sizeX - 1) * quadSize / 2;
+                    backgroundQuad.y = (x.sizeY - 1) * quadSize / 2;
                 }
 
                 border = new textureObject(@"planet/border", 0, quadSize * (x.sizeX + 0.5f), quadSize * (x.sizeY + 0.5f));
@@ -100,6 +107,12 @@ namespace Client
                         drawObject(x.objects[i, j], xi, xj);
                     }
                 }
+            }
+
+            if(x.units!=null)
+            for(int i=0; i<x.units.Count; i++)
+            {
+                drawObject(x.units[i], x.units[i].x, x.units[i].y);
             }
         }
 
@@ -140,16 +153,38 @@ namespace Client
                 int i = (int)(Math.Round(x/quadSize));
                 int j = (int)(Math.Round(y/quadSize));
 
-
-
                 quadSelection = new textureObject(@"planet/QuadSelection", 0, quadSize, quadSize);
                 quadSelection.x = i*quadSize;
                 quadSelection.y = j*quadSize;
 
-                //MapPlanet a = (MapPlanet)currentMap;
+                if (i < currentMap.sizeX && j < currentMap.sizeY && i >= 0 && j >= 0)
+                {
+                    if (prev_i == i && prev_j == j)
+                    {
+                        if (currentMap is MapPlanet)
+                        {
+                            GameObject a = (currentMap as MapPlanet).objects[i, j];
 
-                //((textureObject)a.objects[i, j].forRender).mask = Color.Red;
+                            if (a != null)
+                            {
+                                if (a is Building)
+                                {
+                                    if ((a as Building).type == buildingType.capital)
+                                    {
+                                        SignedData forSend = new SignedData();
+                                        forSend.from = me;
+                                        forSend.data = new int[] { i, j };
 
+                                        connect.send(new Sending { operation = "getCapitalResourse", data = forSend });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                prev_i = i;
+                prev_j = j;
             }
         }
     }

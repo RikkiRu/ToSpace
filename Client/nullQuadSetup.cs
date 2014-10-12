@@ -108,6 +108,14 @@ namespace Client
                         break;
                 }
             }
+
+            if(quad is planetUnit)
+            {
+                if (quad is workerPlanet)
+                {
+                    quad.forRender = new textureObject(@"planet/Worker", 0, quadSize, quadSize);
+                }
+            }
         }
     }
 

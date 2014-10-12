@@ -18,6 +18,9 @@ namespace Contract
         [NonSerialized]
         public GameMap currentMap;
 
+        [NonSerialized]
+        public GameObject resourceUpdater;
+
         public CivSettings civSettings;
         public List<Technology> achivedTechnology;
     }

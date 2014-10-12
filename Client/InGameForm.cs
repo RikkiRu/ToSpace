@@ -22,6 +22,7 @@ namespace Client
         Renderer render;
         playerList tabList = new playerList();
         object upPanel = null;
+        ObjectChoose objChoose = null;
 
         public InGameForm(Player me, ClientConnectionSys connection)
         {
@@ -97,6 +98,8 @@ namespace Client
         private void InGameForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             connect.disconnect();
+            if(objChoose!=null) objChoose.Close();
+            if(tabList!=null) tabList.Close();
         }
 
         private void InGameForm_Load(object sender, EventArgs e)
@@ -106,14 +109,76 @@ namespace Client
             connect.addToEvent("takeYourMap!", loadMap);
             connect.addToEvent("playerList", showPlayerList);
             connect.addToEvent("plenetResource", updatePanelPlanetResourse);
+            connect.addToEvent("takeCapResourse", UpdateResource);
 
-            render = new Renderer(glControl1, me);
+            connect.addToEvent("clearYourUnits", clearUnits);
+            connect.addToEvent("addUnits", addUnits);
+
+            render = new Renderer(glControl1, me, connect);
 
             
 
             timer1.Enabled = true;
 
             connect.send(new Sending { operation = "IwantMyMap!", data = me });
+        }
+
+        private void addUnits(object x)
+        {
+            if (render.currentMap is MapPlanet)
+            {
+                MapPlanet a = (MapPlanet)render.currentMap;
+                List<planetUnit> tN = (List<planetUnit>)x;
+
+                for(int i=0; i<tN.Count; i++)
+                {
+                    a.units.Add(tN[i]);
+                }
+            }
+        }
+
+        private void clearUnits(object x)
+        {
+            if(render.currentMap is MapPlanet)
+            {
+                MapPlanet a = (MapPlanet)render.currentMap;
+                a.units = new List<planetUnit>();
+            }
+        }
+
+
+        private void UpdateResource(object x)
+        {
+            Dictionary<string, EventHandler> a = new Dictionary<string, EventHandler>();
+            a.Add("Создать рабочего", makeWorker); 
+            Invoke(new Action(() => objChoose = new ObjectChoose(x, a)));
+            Invoke(new Action(() => objChoose.Show()));
+        }
+
+        private void makeWorker(object sender, EventArgs e)
+        {
+            int[] coord = new int[2];
+
+            for(int i=0; i<render.currentMap.sizeX; i++)
+            {
+                for(int j=0; j<render.currentMap.sizeY; j++)
+                {
+                    if (((MapPlanet)render.currentMap).objects[i, j]!=null && ((MapPlanet)render.currentMap).objects[i, j] is Building)
+                    {
+                        Building t = (Building)((MapPlanet)render.currentMap).objects[i,j];
+
+                        if(t.type == buildingType.capital)
+                        {
+                            coord[0]=i;
+                            coord[1]=j;
+                        }
+                    }
+                }
+            }
+
+            connect.send(new Sending { operation = "makeWorker", data = new SignedData { from=me, data=coord} });
+
+
         }
 
         private void updatePanelPlanetResourse(object x)
@@ -134,13 +199,12 @@ namespace Client
         {
             render.currentMap = (GameMap)o;
 
-
-            render.position.xMax = render.quadSize * render.currentMap.sizeX/2;
-            render.position.yMax = render.quadSize * render.currentMap.sizeY/2;
+            render.position.xMax = render.quadSize * render.currentMap.sizeX / 2;
+            render.position.yMax = render.quadSize * render.currentMap.sizeY / 2;
             render.position.xMin = -render.position.xMax;
             render.position.yMin = -render.position.yMax;
 
-            render.position.x = render.position.xMax / 2 + render.position.xMin/2;
+            render.position.x = render.position.xMax / 2 + render.position.xMin / 2;
             render.position.y = render.position.yMax / 2 + render.position.yMin / 2;
 
             render.backgroundQuad = null;
@@ -153,6 +217,7 @@ namespace Client
 
                 upPanelT.setName((o as MapPlanet).name, !(o as MapPlanet).wasRenamed);
 
+                Invoke(new Action(() => panel1.Controls.Clear()));
                 Invoke(new Action(() => panel1.Height = upPanelT.Height));
                 Invoke(new Action(()=> panel1.Controls.Add(upPanelT)));
 

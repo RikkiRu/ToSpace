@@ -20,3 +20,4 @@ C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Client\b
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Client\obj\Debug\Client.playerList.resources
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Client\obj\Debug\Client.uppanelPlanet.resources
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Client\obj\Debug\Client.simpleTextEnter.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Client\obj\Debug\Client.ObjectChoose.resources

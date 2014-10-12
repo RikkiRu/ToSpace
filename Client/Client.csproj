@@ -72,6 +72,12 @@
       <DependentUpon>InGameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="nullQuadSetup.cs" />
+    <Compile Include="ObjectChoose.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectChoose.Designer.cs">
+      <DependentUpon>ObjectChoose.cs</DependentUpon>
+    </Compile>
     <Compile Include="playerList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InGameForm.resx">
       <DependentUpon>InGameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectChoose.resx">
+      <DependentUpon>ObjectChoose.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="playerList.resx">
       <DependentUpon>playerList.cs</DependentUpon>

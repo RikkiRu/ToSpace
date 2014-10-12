@@ -26,6 +26,8 @@ namespace Contract
     [Serializable]
     public class MapPlanet:GameMap
     {
+        public static float quadSize = 10f;
+
         public float x;
         public float y;
         public string name;
@@ -37,8 +39,29 @@ namespace Contract
         public MapPlanetQuad defaultQuad;
 
         public mapPlanetResource enviroment;
+
+        [NonSerialized]
+        public List<planetUnit> units;
     }
 
+    [Serializable]
+    public class planetUnit:GameObject
+    {
+        public static float speed = 1;
+
+        public string owner;
+        public float x;
+        public float y;
+
+        public float moveToX;
+        public float moveToY;
+    }
+
+    [Serializable]
+    public class workerPlanet:planetUnit
+    {
+
+    }
 
     [Serializable]
     public class mapPlanetResource

@@ -1,5 +1,5 @@
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\bin\Debug\Contract.dll
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\bin\Debug\Contract.pdb
-C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\obj\Debug\Contract.csprojResolveAssemblyReference.cache
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\obj\Debug\Contract.dll
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\obj\Debug\Contract.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\ToSpace!\Contract\obj\Debug\Contract.csprojResolveAssemblyReference.cache

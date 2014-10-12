@@ -51,6 +51,8 @@ namespace ToSpace_
         {
             MapPlanet res = new MapPlanet();
 
+
+            res.units = new List<planetUnit>();
             res.name = makeName(exists);
             res.defaultQuad = defQuad;
 

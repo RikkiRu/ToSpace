@@ -60,6 +60,7 @@ namespace Client
             addToEvent("byebye", discFinal);
             addToEvent("Exception", ExceptionF);
             addToEvent("okYouOnline", OkayWeConnected);
+            addToEvent("message", messageShow);
 
             this.me = me;
 
@@ -73,6 +74,11 @@ namespace Client
      
             s.data = me;
             send(s);
+        }
+
+        private void messageShow(object x)
+        {
+            MessageBox.Show((string)x);
         }
 
         Player me;

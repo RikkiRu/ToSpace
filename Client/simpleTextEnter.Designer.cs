@@ -82,6 +82,7 @@
             this.Controls.Add(this.textBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "simpleTextEnter";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "simpleTextEnter";
             this.ResumeLayout(false);
             this.PerformLayout();
