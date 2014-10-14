@@ -9,7 +9,7 @@ namespace Contract
     [Serializable]
     public class GameObject
     {
-        public static int timeTick = 5000;
+        public static int timeTick = 3000;
 
         public object forRender;
         public object textureParams;

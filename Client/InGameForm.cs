@@ -100,6 +100,11 @@ namespace Client
             connect.disconnect();
             if(objChoose!=null) objChoose.Close();
             if(tabList!=null) tabList.Close();
+            if (render != null)
+            {
+                render.display = null;
+                render = null;
+            }
         }
 
         private void InGameForm_Load(object sender, EventArgs e)
@@ -295,13 +300,23 @@ namespace Client
 
         private void glControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            float x=e.X;
-            float y=e.Y;
+            makeClick(e, false);
+        }
+
+        private void glControl1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            makeClick(e, true);
+        }
+
+        void makeClick(MouseEventArgs e, bool doubleC)
+        {
+            float x = e.X;
+            float y = e.Y;
 
             x = x / glControl1.Width * render.display.ortoX - render.position.x;
             y = y / glControl1.Height * render.display.ortoY - render.position.y;
 
-            render.makeSelection(x, y);
+            render.makeSelection(x, y, e, true);
         }
 
         private void glControl1_KeyUp(object sender, KeyEventArgs e)
@@ -349,5 +364,8 @@ namespace Client
             (o as string[])[1] = me.name;
             connect.send(new Sending { operation = "newPlanetName", data = o });
         }
+
+        
+
     }
 }

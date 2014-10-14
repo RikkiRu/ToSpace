@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -13,7 +14,7 @@ namespace ToSpace_
         Connection connect;
         StructureObjects structure;
         GeneratorPlanet generator;
-        Timer gameTick;
+        System.Timers.Timer gameTick;
 
         public eventHandler(Connection connect, StructureObjects structure)
         {
@@ -34,7 +35,7 @@ namespace ToSpace_
 
             connect.addToEvent("makeWorker", makeWorker);
 
-            gameTick = new Timer(GameObject.timeTick);
+            gameTick = new System.Timers.Timer(GameObject.timeTick);
             gameTick.Elapsed += gameTick_Elapsed;
             gameTick.Start();
         }
@@ -288,6 +289,7 @@ namespace ToSpace_
                     }
                 }
                 t += 10;
+                
                 connect.send(meme, new Sending { operation = "addUnits", data = bebe });
             }
         }

@@ -18,6 +18,7 @@ namespace Client
         Dictionary<string, RecieveDel> RecFunctions; 
         public bool working = true;
         public string myPassword = string.Empty;
+        List<Sending> takenCommands;
 
         public void addToEvent(string name, RecieveDel func)
         {
@@ -54,6 +55,8 @@ namespace Client
 
         public ClientConnectionSys(Player me, string ip, int port, string myPassword)
         {
+            takenCommands = new List<Sending>();
+
             this.RecFunctions = new Dictionary<string, RecieveDel>();
             this.myPassword = myPassword;
 
@@ -68,12 +71,36 @@ namespace Client
             ClientSocket.Connect(ip, port);
 
             listen = new Thread(StartListen);
+            listen.IsBackground = true;
             listen.Start();
 
             Sending s = new Sending();
      
             s.data = me;
             send(s);
+
+            proccess = new Thread(Processing);
+            proccess.IsBackground = true;
+            proccess.Start();
+        }
+
+        private void Processing(object obj)
+        {
+            while(working)
+            {
+                if(takenCommands.Count>0)
+                {
+                    if (RecFunctions.ContainsKey(takenCommands.First().operation)) 
+                        RecFunctions[takenCommands.First().operation](takenCommands.First().data);
+                    takenCommands.Remove(takenCommands.First());
+                }
+            }
+        }
+
+        public void abortThreads()
+        {
+            listen.Abort();
+            proccess.Abort();
         }
 
         private void messageShow(object x)
@@ -84,6 +111,7 @@ namespace Client
         Player me;
         Socket ClientSocket;
         Thread listen;
+        Thread proccess;
         BinaryFormatter binFormat = new BinaryFormatter();
 
         public void send(Sending x)
@@ -100,14 +128,15 @@ namespace Client
         {
             try
             {
+                byte[] buffer = new byte[Sending.SizeOfMessage];
                 while (working)
                 {
-                    byte[] buffer = new byte[Sending.SizeOfMessage];
                     ClientSocket.Receive(buffer);
                     MemoryStream x = new MemoryStream(buffer);
                     Sending data = (Sending)binFormat.Deserialize(x);
 
-                    if (RecFunctions.ContainsKey(data.operation)) RecFunctions[data.operation](data.data);
+                    takenCommands.Add(data);
+                    //if (RecFunctions.ContainsKey(data.operation)) RecFunctions[data.operation](data.data);
                 }
 
                 ClientSocket.Close();

@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ToSpace_
@@ -218,14 +219,23 @@ namespace ToSpace_
         {
             try
             {
+                while(who.sendingNow)
+                {
+                    Thread.Sleep(10);
+                }
+                who.sendingNow = true;
                 MemoryStream x = new MemoryStream();
                 binFormat.Serialize(x, command);
                 who.socket.Send(x.GetBuffer());
+                
             }
             catch(Exception e)
             {
                 Console.WriteLine("При предачи данных: " + e.Message);
             }
+
+            Thread.Sleep(10);
+            who.sendingNow = false;
         }
 
         public void sendToAll(Sending command)
@@ -291,5 +301,7 @@ namespace ToSpace_
         public Socket socket;
         public byte[] buffer;
         public Player who;
+
+        public bool sendingNow;
     }
 }

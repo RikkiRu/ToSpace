@@ -17,7 +17,7 @@ namespace Client
     {
         ClientConnectionSys connection;
         Player me;
-
+        InGameForm game;
         WaveOut waveOut = new WaveOut();
         LoopStream loop = new LoopStream(new Mp3FileReader(@"Sound/background/Chris_Zabriskie_-_09_-_Cylinder_Nine.mp3"));
       
@@ -62,11 +62,9 @@ namespace Client
 
                 if (SuccesConnected)
                 {
-                    InGameForm game = new InGameForm(me, connection);
+                    game = new InGameForm(me, connection);
                     game.FormClosed += game_FormClosed;
-
                     game.addToChat("Сервер", welcomeStr);
-
                     this.Hide();
                 }
             }
@@ -80,6 +78,7 @@ namespace Client
         void game_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Show();
+            game.Close();
         }
 
         private void FormBegin_Load(object sender, EventArgs e)
@@ -92,7 +91,6 @@ namespace Client
 
         private void FormBegin_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (connection != null) connection.disconnect();
         }
     }
 

@@ -113,7 +113,7 @@ namespace Client
             {
                 if (quad is workerPlanet)
                 {
-                    quad.forRender = new textureObject(@"planet/Worker", 0, quadSize, quadSize);
+                    quad.forRender = new textureObject(@"planet/Worker", 0, quadSize/2, quadSize/2);
                 }
             }
         }

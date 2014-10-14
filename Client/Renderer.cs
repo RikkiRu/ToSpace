@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Client
 {
@@ -22,8 +23,8 @@ namespace Client
         public Player me;
         public playerPos position = new playerPos();
         public ClientConnectionSys connect;
-        int prev_i;
-        int prev_j;
+
+        public object currentUnitSelected;
 
         public float quadSize = MapPlanet.quadSize;
 
@@ -146,46 +147,125 @@ namespace Client
             display.drawObject(t);
         }
 
-        public void makeSelection(float x, float y)
+        public void makeSelection(float x, float y, MouseEventArgs e, bool doubleC)
         {
+            if (e.Clicks != 2) doubleC = false;
+
             if (currentMap != null)
             {
-                int i = (int)(Math.Round(x/quadSize));
-                int j = (int)(Math.Round(y/quadSize));
+                int i = (int)(Math.Round(x / quadSize));
+                int j = (int)(Math.Round(y / quadSize));
 
-                quadSelection = new textureObject(@"planet/QuadSelection", 0, quadSize, quadSize);
-                quadSelection.x = i*quadSize;
-                quadSelection.y = j*quadSize;
+                quadSelection = null;
 
+
+                switch(e.Button)
+                {
+                    case MouseButtons.Left:
+                        leftMouseHandler(x, y, i, j, doubleC);
+                        break;
+
+                    case MouseButtons.Right:
+                        rightMouseHandelr(x, y, i, j, doubleC);
+                        break;
+                }
+
+                
+            }
+        }
+
+
+        void leftMouseHandler(float x, float y, int i, int j, bool dooubleC)
+        {
+            if (dooubleC)
+            {
                 if (i < currentMap.sizeX && j < currentMap.sizeY && i >= 0 && j >= 0)
                 {
-                    if (prev_i == i && prev_j == j)
+                    if (currentMap is MapPlanet)
                     {
-                        if (currentMap is MapPlanet)
+                        GameObject a = (currentMap as MapPlanet).objects[i, j];
+
+                        if (a != null)
                         {
-                            GameObject a = (currentMap as MapPlanet).objects[i, j];
-
-                            if (a != null)
+                            if (a is Building)
                             {
-                                if (a is Building)
+                                if ((a as Building).type == buildingType.capital)
                                 {
-                                    if ((a as Building).type == buildingType.capital)
-                                    {
-                                        SignedData forSend = new SignedData();
-                                        forSend.from = me;
-                                        forSend.data = new int[] { i, j };
+                                    quadSelection = new textureObject(@"planet/QuadSelection", 0, quadSize, quadSize);
+                                    quadSelection.x = i * quadSize;
+                                    quadSelection.y = j * quadSize;
 
-                                        connect.send(new Sending { operation = "getCapitalResourse", data = forSend });
-                                    }
+                                    SignedData forSend = new SignedData();
+                                    forSend.from = me;
+                                    forSend.data = new int[] { i, j };
+
+                                    connect.send(new Sending { operation = "getCapitalResourse", data = forSend });
                                 }
                             }
                         }
                     }
+
+                }
+            }
+
+            else //Не дабл клик
+            {
+                if (currentMap is MapPlanet)
+                {
+                    MapPlanet a = currentMap as MapPlanet;
+                    if (a.units != null)
+                    {
+                        for (int t = 0; t < a.units.Count; t++)
+                        {
+                            if (inDistanse(a.units[t].x, a.units[t].y, x, y, unitSelectDist))
+                            {
+                                currentUnitSelected = a.units[t];
+
+                                quadSelection = new textureObject(@"planet/UnitSelection", 0, unitSelectDist, unitSelectDist);
+                                quadSelection.x = a.units[t].x;
+                                quadSelection.y = a.units[t].y;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        void rightMouseHandelr(float x, float y, int i, int j, bool dooubleC)
+        {
+            quadSelection = null;
+
+            if(currentUnitSelected!=null)
+            {
+                if(currentUnitSelected is planetUnit)
+                {
+                    planetUnit a = (planetUnit)currentUnitSelected;
+
+                    if(a.owner==me.name)
+                    {
+                        a.moveToX = x;
+                        a.moveToY = y;
+                    }
                 }
 
-                prev_i = i;
-                prev_j = j;
+                currentUnitSelected = null;
             }
+
+        }
+
+
+        static float unitSelectDist = MapPlanet.quadSize / 5;
+        public bool inDistanse(float x1, float y1, float x2, float y2, float dist)
+        {
+            if(Math.Abs(x1-x2)<dist)
+            {
+                if(Math.Abs(y1-y2)<dist)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
@@ -223,4 +303,6 @@ namespace Client
         public float speedX = 3f;
         public float speedY = 3f;
     }
+
+    
 }
