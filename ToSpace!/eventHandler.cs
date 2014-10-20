@@ -26,85 +26,13 @@ namespace ToSpace_
             connect.addToEvent("disconnect", disconnectCommand);
             connect.addToEvent("chat", chatWriter);
             connect.addToEvent("generatePlanetForNewPlayer", generatorForNewPlayer);
-
             connect.addToEvent("IwantMyMap!", sendMeMapPlease);
             connect.addToEvent("getPlayerList", playerListGet);
-
             connect.addToEvent("newPlanetName", newPlanetName);
-            connect.addToEvent("getCapitalResourse", getCapitalResource);
-
-            connect.addToEvent("makeWorker", makeWorker);
 
             gameTick = new System.Timers.Timer(GameObject.timeTick);
             gameTick.Elapsed += gameTick_Elapsed;
             gameTick.Start();
-        }
-
-        private void makeWorker(object x)
-        {
-            SignedData trans = (SignedData)x;
-            int[] coord = (int[])trans.data;
-
-            Player me = structure.PlayerList.Where(c => c.name == trans.from.name).FirstOrDefault();
-            if(me!=null)
-            {
-                MapPlanet map = (MapPlanet)me.currentMap;
-
-                if (map.objects[coord[0], coord[1]] != null && map.objects[coord[0], coord[1]] is Building)
-                {
-                    Building cap = (Building)map.objects[coord[0], coord[1]];
-
-                    if(cap.type== buildingType.capital && cap.owner==me.name)
-                    {
-                        capitialResource resourse = (capitialResource)cap.resourses;
-                        if (resourse.populationFree > 0)
-                        {
-                            resourse.emploee(1);
-
-                            float xC = coord[0] * MapPlanet.quadSize;
-                            float yC = coord[1] * MapPlanet.quadSize;
-
-                            map.units.Add(new workerPlanet { owner = me.name, x = xC, y = yC });
-
-                            for (int i = 0; i < structure.PlayerList.Count; i++)
-                            {
-                                if (structure.PlayerList[i].currentMap == map)
-                                {
-                                    sendMeUnitsPlease(structure.PlayerList[i], map.units);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            connect.send(me, new Sending { operation = "message", data = "Нужен хотя бы один безработный" });
-                        }
-                    }
-                }
-            }
-        }
-
-        private void getCapitalResource(object x)
-        {
-            SignedData sd = (SignedData)x;
-
-            int[] coord = (int[])sd.data;
-
-            Player p = structure.PlayerList.Where(c => c.name == sd.from.name).FirstOrDefault();
-
-            if(p!=null)
-            {
-                if(p.currentMap is MapPlanet)
-                {
-                    GameObject cap = (p.currentMap as MapPlanet).objects[coord[0], coord[1]];
-                    if(cap!=null && cap is Building)
-                    {
-                        if((cap as Building).resourses is capitialResource)
-                        {
-                            connect.send(p, new Sending { operation = "takeCapResourse", data = (cap as Building).resourses });
-                        }
-                    }
-                }
-            }
         }
 
         private void newPlanetName(object x)
@@ -145,53 +73,13 @@ namespace ToSpace_
 
         void gameTick_Elapsed(object sender, ElapsedEventArgs e)
         {
-            for(int i=0; i<structure.PlayerList.Count; i++)
-            {
-                if (structure.PlayerList[i].currentMap is MapPlanet)
-                {
-                    resourseDelta(ref (structure.PlayerList[i].currentMap as MapPlanet).enviroment);
-
-                    capitalResourceDelta(ref structure.PlayerList[i].resourceUpdater);
-
-                    connect.send(structure.PlayerList[i], new Sending { operation = "plenetResource", data = (structure.PlayerList[i].currentMap as MapPlanet).enviroment });
-                }
-            }
+           
 
          
         }
 
-        void resourseDelta(ref mapPlanetResource x)
-        {
-            x.water += x.d_water;
-            if (x.water > 100) x.water = 100;
-            if (x.water < 0) x.water = 0;
 
-            x.trash += x.d_trash;
-            if (x.trash > 100)
-            {
-                x.trash = 100;
-                x.water = 0;
-                x.o2 = 0;
-            }
-            if (x.trash < 0) x.trash = 0;
 
-            x.o2 += x.d_o2;
-            if (x.o2 > 100) x.o2 = 100;
-            if (x.o2 < 0) x.o2 = 0;
-
-            if (x.temperature > 60 || x.temperature < -60)
-            {
-                x.o2 = 0;
-                x.water = 0;
-            }
-            
-        }
-
-        void capitalResourceDelta (ref GameObject capital)
-        {
-            capitialResource res = (capitialResource)((capital as Building).resourses);
-            res.delta();
-        }
 
         public void disconnectCommand(object x)
         {
@@ -206,8 +94,6 @@ namespace ToSpace_
                 connect.serverWrite("Отключился " + x1.name);
             }
         }
-
-       
 
         public void chatWriter(object o)
         {
@@ -227,11 +113,10 @@ namespace ToSpace_
         {
             Player player =  structure.PlayerList.Where(c=>c.name==((Player)p).name).FirstOrDefault();
 
-            MapPlanet yourSweetHome = generator.generatePlanet(structure.world.planets, generator.defaultSizeX, generator.defaultSizeY, new MapPlanetQuad { type = typeOfquad.grass }, 50, 30, 30, 30, new mapPlanetResource { o2 = 100, temperature = 27, water=100 });
-            yourSweetHome.ownerHome = player;
+            MapPlanet yourSweetHome = generator.generatePlanet(structure.world.planets, generator.defaultSizeX, generator.defaultSizeY, new MapPlanetQuad { type = typeOfquad.grass }, 50, 30, 30, 30, new mapPlanetResource { o2 = 100, temperature = 27 });
 
             structure.world.planets.Add(yourSweetHome);
-            player.currentMap = yourSweetHome;
+            
            
 
             bool govPlaced = false;
@@ -245,13 +130,15 @@ namespace ToSpace_
                     govPlaced = true;
                     yourSweetHome.objects[rx, ry] = new Building { type = buildingType.capital, owner = player.name, resourses = new capitialResource { populationLimit=1, d_populdation=1, d_eat=1} };
                     player.resourceUpdater = yourSweetHome.objects[rx, ry];
+
+                    yourSweetHome.sectors[rx, ry] = generator.generateSector(yourSweetHome.quads[rx, ry]);
+                    player.currentMap = yourSweetHome.sectors[rx, ry];
                 }
             }
 
 
             Console.WriteLine("Сгенерирована карта для " + player.name);
         }
-
 
         public void sendMeMapPlease(object mememe)
         {
@@ -262,37 +149,10 @@ namespace ToSpace_
             if(map!=null)
             {
                 connect.send(whoAreYou, new Sending { operation = "takeYourMap!", data = map});
-
-
-                if (map is MapPlanet)
-                {
-                    List<planetUnit> bebe = (map as MapPlanet).units;
-                    sendMeUnitsPlease(whoAreYou, bebe);
-                }
             }
         }
 
-
-        public void sendMeUnitsPlease(Player meme, List<planetUnit> a)
-        {
-            connect.send(meme, new Sending { operation = "clearYourUnits" });
-
-            int t = 0;
-            while (t < a.Count)
-            {
-                List<planetUnit> bebe = new List<planetUnit>();
-                for (int i = t; i < t + 10; i++)
-                {
-                    if(i<a.Count)
-                    {
-                        bebe.Add(a[t]);
-                    }
-                }
-                t += 10;
-                
-                connect.send(meme, new Sending { operation = "addUnits", data = bebe });
-            }
-        }
+        
 
         public void playerListGet(object x)
         {
@@ -314,7 +174,5 @@ namespace ToSpace_
                 connect.send(x1, new Sending { operation = "playerList", data = who });
             }
         }
-
-        
     }
 }

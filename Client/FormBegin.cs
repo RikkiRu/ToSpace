@@ -88,10 +88,6 @@ namespace Client
             waveOut.Init(loop);
             waveOut.Play();
         }
-
-        private void FormBegin_FormClosing(object sender, FormClosingEventArgs e)
-        {
-        }
     }
 
     

@@ -51,8 +51,6 @@ namespace ToSpace_
         {
             MapPlanet res = new MapPlanet();
 
-
-            res.units = new List<planetUnit>();
             res.name = makeName(exists);
             res.defaultQuad = defQuad;
 
@@ -71,8 +69,8 @@ namespace ToSpace_
 
             res.quads = new MapPlanetQuad[sizeX, sizeY];
             res.objects = new GameObject[sizeX, sizeY];
-
-
+            res.sectors = new mapSector[sizeX, sizeY];
+            
             int Ssize = sizeX * sizeY;
 
             int oceanTotal = Ssize * waterPercent / 100;
@@ -190,7 +188,6 @@ namespace ToSpace_
 
             res.enviroment = enviroment;
             res.enviroment.d_o2 = forestTotal;
-            res.enviroment.d_water = oceanTotal;
             
 
             return res;
@@ -260,6 +257,17 @@ namespace ToSpace_
 
                 }
             }
+        }
+
+        public mapSector generateSector(MapPlanetQuad template)
+        {
+            mapSector s = new mapSector();
+
+            s.quadTemplate = template;
+            s.buildings = new Building[mapSector.sectorQuadsCount];
+            s.natures = new nature[mapSector.sectorQuadsCount];
+
+            return s;
         }
     }
 }

@@ -42,11 +42,7 @@ namespace Client
         public void draw()
         {
             GL.LoadIdentity();
-
-
             if (backgroundStatic != null) display.drawObject(backgroundStatic);
-            
-
             GL.Translate(position.x, position.y, 0);
 
             if (border != null) display.drawObject(border);
@@ -54,13 +50,13 @@ namespace Client
             if(currentMap!=null)
             {
                 if (currentMap is MapPlanet) drawPlanetMap(currentMap as MapPlanet);
+                if(currentMap is mapSector) drawSectorMap(currentMap as mapSector); 
             }
 
             if(quadSelection!=null)
             {
                 display.drawObject(quadSelection);
             }
-
         }
 
         public void drawPlanetMap(MapPlanet x)
@@ -109,11 +105,13 @@ namespace Client
                     }
                 }
             }
+        }
 
-            if(x.units!=null)
-            for(int i=0; i<x.units.Count; i++)
+        public void drawSectorMap(mapSector x)
+        {
+            if(backgroundQuad==null)
             {
-                drawObject(x.units[i], x.units[i].x, x.units[i].y);
+
             }
         }
 
@@ -210,24 +208,7 @@ namespace Client
 
             else //Не дабл клик
             {
-                if (currentMap is MapPlanet)
-                {
-                    MapPlanet a = currentMap as MapPlanet;
-                    if (a.units != null)
-                    {
-                        for (int t = 0; t < a.units.Count; t++)
-                        {
-                            if (inDistanse(a.units[t].x, a.units[t].y, x, y, unitSelectDist))
-                            {
-                                currentUnitSelected = a.units[t];
-
-                                quadSelection = new textureObject(@"planet/UnitSelection", 0, unitSelectDist, unitSelectDist);
-                                quadSelection.x = a.units[t].x;
-                                quadSelection.y = a.units[t].y;
-                            }
-                        }
-                    }
-                }
+                
             }
         }
 

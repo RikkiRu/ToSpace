@@ -43,6 +43,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="mapQuads.cs" />
     <Compile Include="Maps.cs" />
+    <Compile Include="natureSector.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Players.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

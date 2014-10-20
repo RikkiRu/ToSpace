@@ -101,7 +101,6 @@
             this.Controls.Add(this.button1join);
             this.Name = "FormBegin";
             this.Text = "ToSpace!";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBegin_FormClosing);
             this.Load += new System.EventHandler(this.FormBegin_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

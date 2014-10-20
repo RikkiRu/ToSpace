@@ -34,8 +34,6 @@ namespace Client
         public void setResourse(int o2, int water, int trash, int temperature)
         {
             label2o2.Text = o2.ToString();
-            label8water.Text = water.ToString();
-            label5trash.Text = trash.ToString();
             label7t.Text = temperature.ToString();
 
             if (o2 > 30) label2o2.ForeColor = good;
@@ -43,20 +41,6 @@ namespace Client
             {
                 if (o2 > 5) label2o2.ForeColor = warning;
                 else label2o2.ForeColor = bad;
-            }
-
-            if (water > 30) label8water.ForeColor = good;
-            else
-            {
-                if (water > 5) label8water.ForeColor = warning;
-                else label8water.ForeColor = bad;
-            }
-
-            if (trash < 70) label5trash.ForeColor = good;
-            else
-            {
-                if (water < 95) label5trash.ForeColor = warning;
-                else label5trash.ForeColor = bad;
             }
 
             if (temperature < 30 && temperature > -30) label7t.ForeColor = good;

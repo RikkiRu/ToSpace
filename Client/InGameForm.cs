@@ -113,92 +113,16 @@ namespace Client
             connect.addToEvent("chat", ParseToChart);
             connect.addToEvent("takeYourMap!", loadMap);
             connect.addToEvent("playerList", showPlayerList);
-            connect.addToEvent("plenetResource", updatePanelPlanetResourse);
-            connect.addToEvent("takeCapResourse", UpdateResource);
-
-            connect.addToEvent("clearYourUnits", clearUnits);
-            connect.addToEvent("addUnits", addUnits);
 
             render = new Renderer(glControl1, me, connect);
-
-            
-
             timer1.Enabled = true;
-
             connect.send(new Sending { operation = "IwantMyMap!", data = me });
         }
 
-        private void addUnits(object x)
-        {
-            if (render.currentMap is MapPlanet)
-            {
-                MapPlanet a = (MapPlanet)render.currentMap;
-                List<planetUnit> tN = (List<planetUnit>)x;
-
-                for(int i=0; i<tN.Count; i++)
-                {
-                    a.units.Add(tN[i]);
-                }
-            }
-        }
-
-        private void clearUnits(object x)
-        {
-            if(render.currentMap is MapPlanet)
-            {
-                MapPlanet a = (MapPlanet)render.currentMap;
-                a.units = new List<planetUnit>();
-            }
-        }
 
 
-        private void UpdateResource(object x)
-        {
-            Dictionary<string, EventHandler> a = new Dictionary<string, EventHandler>();
-            a.Add("Создать рабочего", makeWorker); 
-            Invoke(new Action(() => objChoose = new ObjectChoose(x, a)));
-            Invoke(new Action(() => objChoose.Show()));
-        }
 
-        private void makeWorker(object sender, EventArgs e)
-        {
-            int[] coord = new int[2];
-
-            for(int i=0; i<render.currentMap.sizeX; i++)
-            {
-                for(int j=0; j<render.currentMap.sizeY; j++)
-                {
-                    if (((MapPlanet)render.currentMap).objects[i, j]!=null && ((MapPlanet)render.currentMap).objects[i, j] is Building)
-                    {
-                        Building t = (Building)((MapPlanet)render.currentMap).objects[i,j];
-
-                        if(t.type == buildingType.capital)
-                        {
-                            coord[0]=i;
-                            coord[1]=j;
-                        }
-                    }
-                }
-            }
-
-            connect.send(new Sending { operation = "makeWorker", data = new SignedData { from=me, data=coord} });
-
-
-        }
-
-        private void updatePanelPlanetResourse(object x)
-        {
-            try
-            {
-                mapPlanetResource r = x as mapPlanetResource;
-
-                if (upPanel != null)
-                {
-                    Invoke(new Action(() => (upPanel as uppanelPlanet).setResourse(r.o2, r.water, r.trash, r.temperature)));
-                }
-            }
-            catch { }
-        }
+      
 
         public void loadMap(object o)
         {
@@ -364,8 +288,5 @@ namespace Client
             (o as string[])[1] = me.name;
             connect.send(new Sending { operation = "newPlanetName", data = o });
         }
-
-        
-
     }
 }

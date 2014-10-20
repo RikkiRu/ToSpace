@@ -32,48 +32,43 @@ namespace Contract
         public float y;
         public string name;
         public bool wasRenamed;
-        public Player ownerHome;
 
-        public GameObject[,] objects;
         public MapPlanetQuad[,] quads;
         public MapPlanetQuad defaultQuad;
-
-        public mapPlanetResource enviroment;
+        public GameObject[,] objects;
 
         [NonSerialized]
-        public List<planetUnit> units;
+        public mapSector[,] sectors;
+
+        public mapPlanetResource enviroment;
     }
 
     [Serializable]
-    public class planetUnit:GameObject
+    public class mapSector:GameMap
     {
-        public static float speed = 1;
+        public static int sectorQuadsCount = 10;
 
-        public string owner;
-        public float x;
-        public float y;
+        public MapPlanetQuad quadTemplate;
+        public Building[] buildings;
+        public natureSector[] natures;
 
-        public float moveToX;
-        public float moveToY;
+        public mapSectorResourses resourses;
     }
 
     [Serializable]
-    public class workerPlanet:planetUnit
-    {
+    public class nature : GameObject
+    { }
 
-    }
+    [Serializable]
+    public class mapSectorResourses
+    { }
 
     [Serializable]
     public class mapPlanetResource
     {
         public int o2;
-        public int water;
-        public int trash;
         public int temperature;
-
         public int d_o2;
-        public int d_water;
-        public int d_trash;
     }
 
     [Serializable]
